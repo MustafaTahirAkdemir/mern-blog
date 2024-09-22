@@ -29,9 +29,7 @@ export default function Header() {
           <FaMoon/>
         </Button>
         <Link to='sing-in'>
-        <Button  gradientDuoTone="purpleToPink" >
-          Sing In
-        </Button>
+        <Button  gradientDuoTone="purpleToPink" outline > Sing In </Button>
         </Link>
         
         <Navbar.Toggle/>
