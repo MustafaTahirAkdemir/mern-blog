@@ -2,7 +2,7 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function SingUp() {
+export default function SignIn() {
   //1
   const [formData, setFormData] = useState({});
   //2
@@ -19,7 +19,7 @@ export default function SingUp() {
   //4
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password) {
+    if ( !formData.email || !formData.password) {
       return setErrorMessages(
         "Please fill out all fields. ha bu çizgiyi geçen"
       );
@@ -27,7 +27,7 @@ export default function SingUp() {
     try {
       setLoading(true);
       setErrorMessages(null);
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -38,7 +38,7 @@ export default function SingUp() {
       }
       setLoading(false);
       if (res.ok) {
-        navigate("/sing-up");
+        navigate("/");
       }
     } catch (error) {
       setErrorMessages(error.message);
@@ -62,15 +62,7 @@ export default function SingUp() {
         </div>
         <div className=" flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <Label value="Username" />
-              <TextInput
-                type="text"
-                placeholder="Username"
-                id="username"
-                onChange={handleChange}
-              />
-            </div>
+           
             <div>
               <Label value="Email" />
               <TextInput
@@ -81,10 +73,10 @@ export default function SingUp() {
               />
             </div>
             <div>
-              <Label value="your Password" />
+              <Label value="Password" />
               <TextInput
                 type="password"
-                placeholder="Password"
+                placeholder="*********"
                 id="password"
                 onChange={handleChange}
               />
@@ -94,19 +86,19 @@ export default function SingUp() {
               type="submit"
               disabled={loading}
             >
-              Sign Up
+              Sign In
             </Button>
           </form>
           <div className="flex gap-2 text-sm mt-5">
-            <span>Have an account?</span>
-            <Link to="/sign-in" className="text-blue-500">
+            <span>Dont have an account?</span>
+            <Link to="/sign-up" className="text-blue-500">
               {loading ? (
                 <>
                   <Spinner size="sm" />
                   <span className="pl-3"> Loading...</span>
                 </>
               ) : (
-                "Sing Up"
+                "Sign Up"
               )}
             </Link>
           </div>
