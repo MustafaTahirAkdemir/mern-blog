@@ -9,7 +9,8 @@ const postSchema = new mongoose.Schema(
         category:{ type:String, default: 'uncategorized' },
         slug:{type:String , required: true, unique: true},
         
-    },{timestops: true}
+    },
+    { timestamps: true }
 
 )
 
