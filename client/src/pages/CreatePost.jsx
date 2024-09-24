@@ -1,4 +1,4 @@
-import { Button, FileInput, Select, TextInput } from "flowbite-react";
+import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
 import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -11,12 +11,18 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
+import { useNavigate } from 'react-router-dom';
 export default function CreatePost() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
+  const [publishError, setPublishError] = useState(null);
+
+  const navigate = useNavigate();
+
+  console.log(formData);
+
   const handleUpLoadImage = async () => {
     try {
       if (!file) {
@@ -53,6 +59,29 @@ export default function CreatePost() {
       console.log(error);
     }
   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+      if (res.ok) {
+        setPublishError(null);
+        navigate(`/post/${data.slug}`);
+      }
+    } catch (error) {
+      setPublishError("Something went wrong");
+    }
+  };
 
   return (
     <div className="p-3  max-w-2xl mx-auto min-h-screen">
@@ -60,7 +89,7 @@ export default function CreatePost() {
         {" "}
         Create a post
       </h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             text="text"
@@ -68,8 +97,15 @@ export default function CreatePost() {
             required
             id="title"
             className="felx-1"
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
           />
-          <Select>
+          <Select
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
+          >
             <option value="uncategorized"> Select a category</option>
             <option value="Metin2"> Metin2</option>
             <option value="Rust"> Rust</option>
@@ -119,10 +155,18 @@ export default function CreatePost() {
           placeholder="write something..."
           className="h-72 mv-12"
           required
+          onChange={(value) => {
+            setFormData({ ...formData, content: value });
+          }}
         />
         <Button type="submit" gradientDuoTone="purpleToBlue">
           Puplish
         </Button>
+        {publishError && (
+          <Alert className="mt-5" color="failure">
+            {publishError}
+          </Alert>
+        )}
       </form>
     </div>
   );
